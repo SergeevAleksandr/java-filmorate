@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
+    protected int id;
 
     @GetMapping
     public Collection<User> findAll() {
@@ -23,7 +24,8 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
+        user.setId(makeId());
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Адрес электронной почты не может быть пустым и должен быть в правильном формате.");
         }
@@ -36,9 +38,11 @@ public class UserController {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("дата рождения не может быть в будущем");
         }
-        if (users.containsKey(user.getEmail())) {
-            throw new ValidationException("Пользователь с электронной почтой " +
-                    user.getEmail() + " уже зарегистрирован.");
+        for (int i:users.keySet()){
+            if (users.get(i).getEmail().equals(user.getEmail())){
+                throw new ValidationException("Пользователь с электронной почтой " +
+                        user.getEmail() + " уже зарегистрирован.");
+            }
         }
         users.put(user.getId(), user);
         log.debug("Добавлен пользователь {}", user.getName());
@@ -46,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User put(@RequestBody User user) {
+    public User put(@Valid @RequestBody User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Адрес электронной почты не может быть пустым и должен быть в правильном формате.");
         }
@@ -60,10 +64,14 @@ public class UserController {
             throw new ValidationException("дата рождения не может быть в будущем");
         }
         if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Нет фильма с таким ключём");
+            throw new ValidationException("Нет пользователя с таким ключём");
         }
         users.put(user.getId(), user);
         log.debug("Обновлен пользователь {}", user.getName());
         return user;
+    }
+    private int makeId() {
+        id = id+1;
+        return id;
     }
 }
