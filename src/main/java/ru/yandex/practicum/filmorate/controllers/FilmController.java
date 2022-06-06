@@ -28,24 +28,13 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        film.setId(makeId());
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ValidationException("название не может быть пустым.");
-        }
+        film.setId(++id);
+        check(film);
         for (int i:films.keySet()){
             if (films.get(i).getName().equals(film.getName())){
                 throw new ValidationException("Фильм с таким именем-" +
                         film.getId() + " уже существует.");
             }
-        }
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("максимальная длина описания — 200 символов");
-        }
-        if (film.getReleaseDate().isBefore(DateReleaseMin)) {
-            throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("продолжительность фильма должна быть положительной");
         }
         films.put(film.getId(), film);
         log.debug("Добавлен фильм {}", film.getName());
@@ -54,6 +43,15 @@ public class FilmController {
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
+        check(film);
+        if (!films.containsKey(film.getId())) {
+            throw new ValidationException("Нет фильма с таким ключём");
+        }
+        films.put(film.getId(), film);
+        log.debug("Обновлен фильм {}", film.getName());
+        return film;
+    }
+    private void check(Film film){
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("название не может быть пустым.");
         }
@@ -63,18 +61,8 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(DateReleaseMin)) {
             throw new ValidationException("дата релиза — не раньше 28 декабря 1895 года");
         }
-        if (film.getDuration() < 0) {
+        if (film.getDuration() <=0) {
             throw new ValidationException("продолжительность фильма должна быть положительной");
         }
-        if (!films.containsKey(film.getId())) {
-            throw new ValidationException("Нет фильма с таким ключём");
-        }
-        films.put(film.getId(), film);
-        log.debug("Обновлен фильм {}", film.getName());
-        return film;
-    }
-    private int makeId() {
-        id = id+1;
-        return id;
     }
 }

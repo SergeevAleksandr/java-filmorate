@@ -34,7 +34,7 @@ public class FilmControllerTest {
                 "Много символов Много символов Много символов Много символов Много символов Много символов Много символов Много символов ",
                 LocalDate.of(1895,12,28),200);
         filmTest7 = new Film("Фильм_7","ОписаниеФильма7", LocalDate.of(2000,12,12),0);
-        filmTest8 = new Film("Фильм_8","ОписаниеФильма8", LocalDate.of(2000,12,12),0);
+        filmTest8 = new Film("Фильм_8","ОписаниеФильма8", LocalDate.of(2000,12,12),1);
     }
     @Test
     void createOneFilm() {
