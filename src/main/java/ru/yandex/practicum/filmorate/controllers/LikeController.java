@@ -1,0 +1,69 @@
+package ru.yandex.practicum.filmorate.controllers;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+@RestController
+@RequestMapping("/films")
+@RequiredArgsConstructor
+public class LikeController {
+
+    private final FilmService filmService;
+
+    @PutMapping("/{id}/like/{userId}")
+    public List<Long> addLikeFilm(
+            @PathVariable("id") Long filmId,
+            @PathVariable("userId") Long userId
+    ) throws UserNotFoundException, FilmNotFoundException {
+        return filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public List<Long> removeLikeFilm(
+            @PathVariable("id") Long filmId,
+            @PathVariable("userId") Long userId
+    ) throws UserNotFoundException, FilmNotFoundException {
+        return filmService.deleteLike(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    public Set<Film> findPopularFilms(
+            @RequestParam(value = "count", defaultValue = "10", required = false) Integer count
+    ) {
+        return filmService.findPopularFilms(count);
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handle(final UserNotFoundException e) {
+        return Map.of(
+                "error", "UserNotFoundException",
+                "errorMessage", e.getMessage()
+        );
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handle(final ValidationException e) {
+        return Map.of(
+                "error", "ValidationException",
+                "errorMessage", e.getMessage()
+        );
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handle(final FilmNotFoundException e) {
+        return Map.of(
+                "error", "FilmNotFoundException",
+                "errorMessage", e.getMessage()
+        );
+    }
+}

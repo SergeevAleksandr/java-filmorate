@@ -4,9 +4,13 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 public class User {
-    private int id;
+    private long id;
     @NotEmpty
     private String login;
     private String name;
@@ -14,6 +18,8 @@ public class User {
     private String email;
     @Past
     private LocalDate birthday;
+
+    public Set<Long> friends = new HashSet<>();
 
     @Override
     public String toString() {
