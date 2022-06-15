@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +25,8 @@ public class FilmControllerTest {
     public Film filmTest8;
 
     InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    FilmService filmService = new FilmService(inMemoryFilmStorage);
+    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    FilmService filmService = new FilmService(inMemoryFilmStorage,inMemoryUserStorage);
     FilmController filmController = new FilmController(filmService);
     @BeforeEach
     public void beforeEach(){
@@ -81,7 +84,7 @@ public class FilmControllerTest {
         assertEquals("продолжительность фильма должна быть положительной", exception.getMessage());
     }
     @Test
-    void UpdateFilm(){
+    void UpdateFilm() throws FilmNotFoundException {
         filmController.create(filmTest);
         filmTest8.setId(filmTest.getId());
         filmController.put(filmTest8);
@@ -90,8 +93,8 @@ public class FilmControllerTest {
     @Test
     void UpdateFilmFail(){
         filmController.create(filmTest);
-        final RuntimeException exception = assertThrows(
-                ValidationException.class,
+        final Exception exception = assertThrows(
+                FilmNotFoundException.class,
                 () -> filmController.put(filmTest3));
         assertEquals("Нет фильма с таким ключём", exception.getMessage());
     }
