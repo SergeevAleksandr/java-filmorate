@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private InMemoryFilmStorage inMemoryFilmStorage;
-    private InMemoryUserStorage inMemoryUserStorage;
+    private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final InMemoryUserStorage inMemoryUserStorage;
 
     public FilmService(InMemoryFilmStorage inMemoryFilmStorage,InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
@@ -37,11 +37,6 @@ public class FilmService {
     public Film put(Film film) throws FilmNotFoundException {
         return inMemoryFilmStorage.put(film);
     }
-
-    public void check(Film film) {
-        inMemoryFilmStorage.check(film);
-    }
-
     public List<Long> addLike(Long filmId, Long userId) throws FilmNotFoundException, UserNotFoundException {
 
         Film film = inMemoryFilmStorage.getFilmById(filmId);
@@ -69,5 +64,8 @@ public class FilmService {
         return inMemoryFilmStorage.findAll().stream().
                 sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size()).
                 limit(count).collect(Collectors.toSet());
+    }
+    public void isExistById(Long id) throws FilmNotFoundException {
+      inMemoryFilmStorage.isExistById(id);
     }
 }

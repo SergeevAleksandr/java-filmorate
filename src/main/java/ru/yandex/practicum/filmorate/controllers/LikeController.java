@@ -42,28 +42,4 @@ public class LikeController {
     ) {
         return filmService.findPopularFilms(count);
     }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final UserNotFoundException e) {
-        return Map.of(
-                "error", "UserNotFoundException",
-                "errorMessage", e.getMessage()
-        );
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final ValidationException e) {
-        return Map.of(
-                "error", "ValidationException",
-                "errorMessage", e.getMessage()
-        );
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final FilmNotFoundException e) {
-        return Map.of(
-                "error", "FilmNotFoundException",
-                "errorMessage", e.getMessage()
-        );
-    }
 }

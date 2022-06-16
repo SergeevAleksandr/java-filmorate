@@ -27,6 +27,8 @@ public class FriendController {
     ) throws UserNotFoundException {
         log.debug("Получен запрос PUT на добавление в друзья пользователей с id {} и id {}",
                 id, friendId);
+        userService.isExistById(id);
+        userService.isExistById(friendId);
         userService.addFriend(id, friendId);
     }
 
@@ -53,13 +55,5 @@ public class FriendController {
     ) throws UserNotFoundException {
         log.debug("Получен запрос GET на получение общих друзей пользователя с id {} и id {}", id, otherId);
         return userService.findCommonFriends(id, otherId);
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final UserNotFoundException e) {
-        return Map.of(
-                "error", "UserNotFoundException",
-                "errorMessage", e.getMessage()
-        );
     }
 }

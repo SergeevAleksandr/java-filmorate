@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -27,6 +26,7 @@ public class UserController {
     }
     @GetMapping("/{id}")
     public User findById( @PathVariable("id") Long id) throws UserNotFoundException {
+        userService.isExistById(id);
         return userService.findById(id);
     }
     @PostMapping
@@ -35,25 +35,15 @@ public class UserController {
     }
 
     @PutMapping
-    public User put(@Valid @RequestBody User user) {
+    public User put(@Valid @RequestBody User user) throws UserNotFoundException {
         return userService.put(user);
     }
-    private void check(User user) {
-        userService.check(user);
-    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handle(final UserNotFoundException e) {
         return Map.of(
                 "error", "UserNotFoundException",
-                "errorMessage", e.getMessage()
-        );
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final ValidationException e) {
-        return Map.of(
-                "error", "ValidationException",
                 "errorMessage", e.getMessage()
         );
     }

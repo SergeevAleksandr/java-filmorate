@@ -23,12 +23,8 @@ public class UserService {
         return inMemoryUserStorage.create(user);
     }
 
-    public User put(User user) {
+    public User put(User user) throws UserNotFoundException {
         return inMemoryUserStorage.put(user);
-    }
-
-    public void check(User user) {
-        inMemoryUserStorage.check(user);
     }
     public User findById(Long id) throws UserNotFoundException {
         return inMemoryUserStorage.findById(id);
@@ -95,5 +91,8 @@ public class UserService {
             userFriends.add(inMemoryUserStorage.findById(id));
         }
         return userFriends;
+    }
+    public void isExistById(Long id) throws UserNotFoundException {
+       inMemoryUserStorage.isExistById(id);
     }
 }

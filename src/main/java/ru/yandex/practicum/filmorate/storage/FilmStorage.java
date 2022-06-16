@@ -12,6 +12,4 @@ public interface FilmStorage {
     Film create(@Valid @RequestBody Film film);
 
     Film put(@Valid @RequestBody Film film) throws FilmNotFoundException;
-
-    void check(Film film);
 }

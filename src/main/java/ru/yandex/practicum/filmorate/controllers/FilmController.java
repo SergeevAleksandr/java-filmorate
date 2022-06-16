@@ -29,6 +29,7 @@ public class FilmController {
     }
     @GetMapping("/{id}")
     public Film findById(@PathVariable("id") Long id) throws  FilmNotFoundException {
+        filmService.isExistById(id);
         return filmService.getFilmById(id);
     }
 
@@ -40,24 +41,5 @@ public class FilmController {
     @PutMapping
     public Film put(@Valid @RequestBody Film film) throws FilmNotFoundException {
        return filmService.put(film);
-    }
-    private void check(Film film) {
-        filmService.check(film);
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handle(final FilmNotFoundException e) {
-        return Map.of(
-                "error", "FilmNotFoundException",
-                "errorMessage", e.getMessage()
-        );
-    }
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handle(final ValidationException e) {
-        return Map.of(
-                "error", "ValidationException",
-                "errorMessage", e.getMessage()
-        );
     }
 }
