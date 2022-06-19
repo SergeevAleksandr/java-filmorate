@@ -9,7 +9,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class UserService {
+public class UserService implements UserInterface {
     private final InMemoryUserStorage inMemoryUserStorage;
 
     public UserService(InMemoryUserStorage inMemoryUserStorage) {
@@ -26,10 +26,10 @@ public class UserService {
     public User put(User user) throws UserNotFoundException {
         return inMemoryUserStorage.put(user);
     }
-    public User findById(Long id) throws UserNotFoundException {
+    public User findById(Long id) {
         return inMemoryUserStorage.findById(id);
     }
-    public void addFriend(Long id, Long friendId) throws UserNotFoundException {
+    public void addFriend(Long id, Long friendId) {
 
         User user = inMemoryUserStorage.findById(id);
         User friend = inMemoryUserStorage.findById(friendId);
@@ -55,14 +55,14 @@ public class UserService {
         log.debug("Пользователи удалены из друзей id {} и id - {}", id, friendId);
     }
 
-    public List<User> findAllFriendsUserById(Long id) throws UserNotFoundException {
+    public List<User> findAllFriendsUserById(Long id) {
 
         User user = inMemoryUserStorage.findById(id);
 
         return findFriendFromUserId(new ArrayList<>(user.getFriends()));
     }
 
-    public List<User> findCommonFriends(Long id, Long otherId) throws UserNotFoundException {
+    public List<User> findCommonFriends(Long id, Long otherId) {
 
         List<User> commonFriends = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class UserService {
 
         return commonFriends;
     }
-    private List<User> findFriendFromUserId(List<Long> idFriends) throws UserNotFoundException {
+    private List<User> findFriendFromUserId(List<Long> idFriends) {
         List<User> userFriends = new ArrayList<>();
 
         for (Long id : idFriends) {

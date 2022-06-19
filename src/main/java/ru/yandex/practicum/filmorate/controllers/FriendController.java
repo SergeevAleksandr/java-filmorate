@@ -2,16 +2,11 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("users/{id}")
@@ -43,7 +38,7 @@ public class FriendController {
     }
 
     @GetMapping("/friends")
-    public List<User> findAllFriendsById(@PathVariable("id") Long id) throws UserNotFoundException {
+    public List<User> findAllFriendsById(@PathVariable("id") Long id) {
         log.debug("Получен запрос GET на получение друзей пользователя с id {}", id);
         return userService.findAllFriendsUserById(id);
     }
@@ -52,7 +47,7 @@ public class FriendController {
     public List<User> findCommonFriends(
             @PathVariable("id") Long id,
             @PathVariable("otherId") Long otherId
-    ) throws UserNotFoundException {
+    ) {
         log.debug("Получен запрос GET на получение общих друзей пользователя с id {} и id {}", id, otherId);
         return userService.findCommonFriends(id, otherId);
     }

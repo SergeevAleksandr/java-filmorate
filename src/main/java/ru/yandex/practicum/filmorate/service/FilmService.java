@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class FilmService {
+public class FilmService implements FilmInterface{
     private final InMemoryFilmStorage inMemoryFilmStorage;
     private final InMemoryUserStorage inMemoryUserStorage;
 
@@ -26,7 +26,7 @@ public class FilmService {
         return inMemoryFilmStorage.findAll();
     }
 
-    public Film getFilmById(Long id) throws FilmNotFoundException {
+    public Film getFilmById(Long id) {
         return inMemoryFilmStorage.getFilmById(id);
     }
 
@@ -37,7 +37,7 @@ public class FilmService {
     public Film put(Film film) throws FilmNotFoundException {
         return inMemoryFilmStorage.put(film);
     }
-    public List<Long> addLike(Long filmId, Long userId) throws FilmNotFoundException, UserNotFoundException {
+    public List<Long> addLike(Long filmId, Long userId) {
 
         Film film = inMemoryFilmStorage.getFilmById(filmId);
 
@@ -46,8 +46,7 @@ public class FilmService {
         return new ArrayList<>(film.getLikes());
     }
 
-    public List<Long> deleteLike(Long filmId, Long userId) throws UserNotFoundException,
-            FilmNotFoundException {
+    public List<Long> deleteLike(Long filmId, Long userId) throws UserNotFoundException {
 
         Film film = inMemoryFilmStorage.getFilmById(filmId);
 

@@ -12,6 +12,4 @@ public interface UserStorage {
     User create(@Valid @RequestBody User user);
 
     User put(@Valid @RequestBody User user) throws UserNotFoundException;
-
-    //void check(User user);
 }

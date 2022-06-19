@@ -1,16 +1,11 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -24,7 +19,7 @@ public class LikeController {
     public List<Long> addLikeFilm(
             @PathVariable("id") Long filmId,
             @PathVariable("userId") Long userId
-    ) throws UserNotFoundException, FilmNotFoundException {
+    ) {
         return filmService.addLike(filmId, userId);
     }
 
@@ -32,7 +27,7 @@ public class LikeController {
     public List<Long> removeLikeFilm(
             @PathVariable("id") Long filmId,
             @PathVariable("userId") Long userId
-    ) throws UserNotFoundException, FilmNotFoundException {
+    ) throws UserNotFoundException {
         return filmService.deleteLike(filmId, userId);
     }
 

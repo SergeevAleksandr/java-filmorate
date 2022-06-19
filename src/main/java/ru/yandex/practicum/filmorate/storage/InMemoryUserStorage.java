@@ -3,11 +3,9 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage{
         return user;
     }
 
-    public User findById(Long id) throws UserNotFoundException {
+    public User findById(Long id) {
         return users.get(id);
     }
     public void isExistById(Long id) throws UserNotFoundException {
