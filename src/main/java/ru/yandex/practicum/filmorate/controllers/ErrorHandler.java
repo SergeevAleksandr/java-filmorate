@@ -23,5 +23,5 @@ public class ErrorHandler {
     public ErrorResponse notFoundException(final Exception e) {
         return new ErrorResponse(e.getMessage());
     }
-
+//test
 }
