@@ -1,29 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-@Data
+import java.util.HashSet;
+import java.util.Set;
+
+@ToString
+@Getter
+@Setter
 public class User {
-    private int id;
-    @NotEmpty
+    private long id;
+    @NotEmpty(message = "логин не может содержать пробелы.")
+    @NotNull(message = "логин не может быть пустым")
     private String login;
     private String name;
     @Email
+    @NotEmpty
     private String email;
     @Past
     private LocalDate birthday;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", birthday=" + birthday +
-                '}';
-    }
+    public Set<Long> friends = new HashSet<>();
+
 
     public User(String login, String name, String email, LocalDate birthday) {
         this.login = login;
