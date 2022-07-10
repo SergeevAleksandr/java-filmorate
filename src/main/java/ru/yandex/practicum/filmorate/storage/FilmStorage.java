@@ -2,14 +2,17 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.util.Collection;
 
 public interface FilmStorage {
-    Collection<Film> findAll();
+    Film findByID(long filmId) throws ObjectNotFoundException;
+
+    Collection<Film> findAll() throws ObjectNotFoundException;
 
     Film create(@Valid @RequestBody Film film);
 
-    Film put(@Valid @RequestBody Film film) throws FilmNotFoundException;
+    Film update(Film film) throws ObjectNotFoundException;
 }

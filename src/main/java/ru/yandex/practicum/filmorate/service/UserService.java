@@ -2,97 +2,72 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendDao;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
+
 import java.util.*;
 
 @Service
 @Slf4j
 public class UserService implements UserInterface {
     private final InMemoryUserStorage inMemoryUserStorage;
+    private final UserDbStorage  userDbStorage;
 
-    public UserService(InMemoryUserStorage inMemoryUserStorage) {
+    public UserService(InMemoryUserStorage inMemoryUserStorage, UserDbStorage userDbStorage) {
         this.inMemoryUserStorage = inMemoryUserStorage;
+        this.userDbStorage = userDbStorage;
     }
-    public Collection<User> findAll() {
-        return inMemoryUserStorage.findAll();
+
+
+    public Collection<User> findAll() throws ObjectNotFoundException {
+        return userDbStorage.findAll();
     }
 
     public User create(User user) {
-        return inMemoryUserStorage.create(user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+        return userDbStorage.create(user);
     }
 
-    public User put(User user) throws UserNotFoundException {
-        return inMemoryUserStorage.put(user);
+    public User update(User user) throws UserNotFoundException, ObjectNotFoundException {
+        return userDbStorage.update(user);
     }
-    public User findById(Long id) {
-        return inMemoryUserStorage.findById(id);
+    public User findById(Long userID) throws ObjectNotFoundException {
+        return userDbStorage.findByID(userID);
     }
-    public void addFriend(Long id, Long friendId) {
+    public Long addFriend(Long userId, Long friendId) throws ObjectNotFoundException {
 
-        User user = inMemoryUserStorage.findById(id);
-        User friend = inMemoryUserStorage.findById(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
-        log.debug("Пользователи добавлены в друзья id {} и id {}", id, friendId);
+        userDbStorage.findByID(userId);
+        userDbStorage.findByID(friendId);
+        return userDbStorage.addFriend(userId, friendId);
     }
+    public List<User> findAllUserFriendsById(Long userId) throws ObjectNotFoundException {
+        userDbStorage.findByID(userId);
+        return (List<User>) userDbStorage.findUserFriendsById(userId);
+    }
+    public void deleteFriend(Long userId, Long friendId) throws UserNotFoundException, ObjectNotFoundException {
 
-    public void deleteFriend(Long id, Long friendId) throws UserNotFoundException {
-
-        User user = inMemoryUserStorage.findById(id);
-        User friend = inMemoryUserStorage.findById(friendId);
-
-        if (!user.getFriends().contains(friendId) ||
-                !friend.getFriends().contains(id)) {
-            throw new UserNotFoundException("Пользователи с id " + id + ", " + friendId + " не являются друзьями.");
+        userDbStorage.findByID(userId);
+        userDbStorage.findByID(friendId);
+        Collection userFriends = userDbStorage.findUserFriendsIdById(userId);
+        if (!userFriends.contains(friendId))
+                {
+            throw new UserNotFoundException( userId + ", не друг пользователю " + friendId);
 
         }
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
-        log.debug("Пользователи удалены из друзей id {} и id - {}", id, friendId);
+        userDbStorage.deleteFriend(userId,friendId);
+        log.debug(userId +" удален из друзей "+ friendId);
     }
 
-    public List<User> findAllFriendsUserById(Long id) {
-
-        User user = inMemoryUserStorage.findById(id);
-
-        return findFriendFromUserId(new ArrayList<>(user.getFriends()));
-    }
-
-    public List<User> findCommonFriends(Long id, Long otherId) {
-
-        List<User> commonFriends = new ArrayList<>();
-
-        User firstUser = inMemoryUserStorage.findById(id);
-        User secondUser = inMemoryUserStorage.findById(otherId);
-
-            List<User> friendsFirstUser = findFriendFromUserId(new ArrayList<>(firstUser.getFriends()));
-            List<User> friendsSecondUser = findFriendFromUserId(new ArrayList<>(secondUser.getFriends()));
-            for (User i : friendsFirstUser) {
-                Iterator<User> iterator = friendsSecondUser.listIterator();
-                while (iterator.hasNext()) {
-                    if (i.equals(iterator.next())) {
-                        commonFriends.add(i);
-                        iterator.remove();
-                        break;
-                    }
-            }
-        }
-
-        return commonFriends;
-    }
-    private List<User> findFriendFromUserId(List<Long> idFriends) {
-        List<User> userFriends = new ArrayList<>();
-
-        for (Long id : idFriends) {
-            userFriends.add(inMemoryUserStorage.findById(id));
-        }
-        return userFriends;
-    }
-    public void isExistById(Long id) throws UserNotFoundException {
-       inMemoryUserStorage.isExistById(id);
+     public List<User> findCommonFriends(Long firstUserId, Long secondUserId) throws ObjectNotFoundException {
+       userDbStorage.findByID(firstUserId);
+       userDbStorage.findByID(secondUserId);
+       return (List<User>) userDbStorage.findCommonFriends(firstUserId,secondUserId);
     }
 }

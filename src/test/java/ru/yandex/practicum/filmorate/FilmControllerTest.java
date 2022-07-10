@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+/**package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +83,7 @@ public class FilmControllerTest {
                 () -> filmController.create(filmTest7));
         assertEquals("продолжительность фильма должна быть положительной", exception.getMessage());
     }**/
-    @Test
+   /** @Test
     void UpdateFilm() throws FilmNotFoundException {
         filmController.create(filmTest);
         filmTest8.setId(filmTest.getId());
@@ -98,4 +98,4 @@ public class FilmControllerTest {
                 () -> filmController.put(filmTest3));
         assertEquals("Нет фильма с таким ключём", exception.getMessage());
     }**/
-}
+//}

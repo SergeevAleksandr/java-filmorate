@@ -37,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage{
         return user;
     }
 
-    public User put(User user) throws UserNotFoundException {
+    public User update(User user) throws UserNotFoundException {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("Пользователь с таким Id " + id + " не найден");
         }

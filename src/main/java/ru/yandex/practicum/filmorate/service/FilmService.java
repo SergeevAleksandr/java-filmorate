@@ -1,70 +1,56 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Service
 public class FilmService implements FilmInterface{
-    private final InMemoryFilmStorage inMemoryFilmStorage;
-    private final InMemoryUserStorage inMemoryUserStorage;
+    private final FilmDbStorage filmDbStorage;
+    private final UserDbStorage userDbStorage;
 
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage,InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.inMemoryUserStorage = inMemoryUserStorage;
-    }
-    public Collection<Film> findAll() {
-        return inMemoryFilmStorage.findAll();
+    public FilmService(FilmDbStorage filmDbStorage, UserDbStorage userDbStorage) {
+        this.filmDbStorage = filmDbStorage;
+        this.userDbStorage = userDbStorage;
     }
 
-    public Film getFilmById(Long id) {
-        return inMemoryFilmStorage.getFilmById(id);
+
+    public Collection<Film> findAll() throws ObjectNotFoundException {
+        return filmDbStorage.findAll();
+    }
+
+    public Film getFilmById(Long id) throws ObjectNotFoundException {
+        return filmDbStorage.findByID(id);
     }
 
     public Film create(Film film) {
-        return inMemoryFilmStorage.create(film);
+        return filmDbStorage.create(film);
     }
 
     public Film put(Film film) throws FilmNotFoundException {
-        return inMemoryFilmStorage.put(film);
-    }
-    public List<Long> addLike(Long filmId, Long userId) {
-
-        Film film = inMemoryFilmStorage.getFilmById(filmId);
-
-        film.getLikes().add(inMemoryUserStorage.findById(userId).getId());
-
-        return new ArrayList<>(film.getLikes());
+        return null;
     }
 
-    public List<Long> deleteLike(Long filmId, Long userId) throws UserNotFoundException {
-
-        Film film = inMemoryFilmStorage.getFilmById(filmId);
-
-        if (!film.getLikes().contains(userId)) {
-            throw new UserNotFoundException("Лайк от пользователя с id - " + userId + " отсутствует.");
-        }
-
-        film.getLikes().remove(userId);
-
-        return new ArrayList<>(film.getLikes());
+    public Film update(Film film) throws  ObjectNotFoundException {
+        return filmDbStorage.update(film);
     }
-    public Set<Film> findPopularFilms(Integer count) {
 
-        return inMemoryFilmStorage.findAll().stream().
-                sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size()).
-                limit(count).collect(Collectors.toSet());
+    public Collection<Film> findPopularFilms(Integer count) {
+        return filmDbStorage.findPopularFilms(count);
     }
-    public void isExistById(Long id) throws FilmNotFoundException {
-      inMemoryFilmStorage.isExistById(id);
+
+    public Long deleteLike(Long filmId, Long userId) throws ObjectNotFoundException {
+        filmDbStorage.findByID(filmId);
+        userDbStorage.findByID(userId);
+        return filmDbStorage.deleteLike(filmId,userId);
+    }
+
+    public Long addLike(Long filmId, Long userId) throws ObjectNotFoundException {
+        filmDbStorage.findByID(filmId);
+        userDbStorage.findByID(userId);
+        return filmDbStorage.addLike(filmId,userId);
     }
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
@@ -25,6 +26,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         return films;
     }
 
+    @Override
+    public Film findByID(long filmId) throws ObjectNotFoundException {
+        return null;
+    }
+
     public Collection<Film> findAll() {
         log.debug("Текущее количество фильмов: {}", films.size());
         return films.values();
@@ -42,6 +48,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         films.put(film.getId(), film);
         log.debug("Добавлен фильм {}", film.getName());
         return film;
+    }
+
+    @Override
+    public Film update(Film film) throws ObjectNotFoundException {
+        return null;
     }
 
     public Film put(Film film) throws FilmNotFoundException {
