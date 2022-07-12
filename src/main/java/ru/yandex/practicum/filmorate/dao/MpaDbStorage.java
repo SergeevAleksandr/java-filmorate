@@ -17,9 +17,6 @@ import java.util.List;
 public class MpaDbStorage implements MPAStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    //private static final String getMpa = "SELECT * FROM MPA";
-    //private static final String findMpaFromId = "SELECT * FROM MPA WHERE ID_MPA = ?";
-    //private static final String findNameMpaFromId = "SELECT NAME FROM MPA WHERE ID_MPA = ?";
 
     static MPA makeMpa(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("ID_MPA");

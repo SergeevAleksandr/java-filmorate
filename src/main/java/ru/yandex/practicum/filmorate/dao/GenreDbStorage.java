@@ -15,15 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
-   // private final static String getAllGenre = "SELECT * FROM GENRES";
-   // private final static String findGenreId = "SELECT * FROM GENRES WHERE ID_GENRE = ?";
-    /**private final static String getGenreFromFilmId = "SELECT G.ID_GENRE,G.NAME\n" +
-            "FROM GENRE_FILMS AS GF\n" +
-            "LEFT JOIN GENRES G on G.ID_GENRE = GF.ID_GENRE\n" +
-            "WHERE ID_FILM = ?\n"+
-            "ORDER BY  G.ID_GENRE";*/
-   // private final static String addGenreFilm = "INSERT INTO GENRE_FILMS (ID_FILM, ID_GENRE) VALUES (?, ?)";
-   // private static final String deleteGenreFilm = "DELETE FROM GENRE_FILMS WHERE ID_FILM = ?";
     static Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("ID_GENRE");
         String name = rs.getString("NAME");

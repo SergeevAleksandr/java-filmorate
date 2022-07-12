@@ -16,20 +16,10 @@ import java.util.*;
 
 @Component
 @Primary
-//@RequiredArgsConstructor
 @Slf4j
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate  jdbcTemplate;
     private FriendDbStorage friendDao;
-    //private static final String getAllUser = "SELECT * FROM USERS";
-    //private static final String getUserById = "SELECT * FROM USERS WHERE ID_USER = ?";
-   /** private static final String getUserId ="SELECT ID_USER FROM USERS WHERE" +
-            " EMAIL=? AND LOGIN=? AND NAME=? AND BIRTHDAY=?";*/
-    /**private static final String addUser = "INSERT INTO USERS (NAME, EMAIL, LOGIN, BIRTHDAY)" +
-            " VALUES (?, ?, ?, ?)";*/
-    /**private static final String updateUser = "UPDATE USERS SET" +
-            " NAME = ?, EMAIL = ?, LOGIN = ?, BIRTHDAY = ? WHERE ID_USER = ?";*/
-   // private static final String deleteUser = "DELETE FROM USERS WHERE ID_USER = ?";
 
     public UserDbStorage(JdbcTemplate jdbcTemplate, FriendDbStorage friendDao) {
         this.jdbcTemplate = jdbcTemplate;
