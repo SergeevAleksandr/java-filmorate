@@ -1,16 +1,17 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
+
 import javax.validation.Valid;
 import java.util.Collection;
 
-public interface UserStorage {
-    Collection<User> findAll() throws ObjectNotFoundException;
+public interface MPAStorage {
 
-    User create(@Valid @RequestBody User user);
+    Collection<MPA> findAll();
 
-    User update(@Valid @RequestBody User user) throws UserNotFoundException, ObjectNotFoundException;
+    String findNameById(Long mpaId) throws ObjectNotFoundException;
 }

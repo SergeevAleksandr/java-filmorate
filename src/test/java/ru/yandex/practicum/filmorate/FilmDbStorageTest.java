@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
@@ -24,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class FilmDbStorageTest {
     private final FilmDbStorage filmDbStorage;
-    private final JdbcTemplate jdbcTemplate;
     private Film film;
 
     @BeforeEach
@@ -39,32 +37,30 @@ public class FilmDbStorageTest {
                 likes(new HashSet<>()).
                 genres(Collections.singleton(new Genre(2l,"name"))).
                 build();
+        filmDbStorage.create(film);
     }
     @Test
     public void addFilmTest() throws ObjectNotFoundException {
-        assertThat(filmDbStorage.findAll()).hasSize(0);
-        filmDbStorage.create(film);
         assertThat(filmDbStorage.findAll()).hasSize(1);
     }
     @Test
     public void findFilmByIdTest() throws ObjectNotFoundException {
-        Film filmReturn = filmDbStorage.create(film);
-        Film foundFilm = filmDbStorage.findByID(filmReturn.getId());
-        assertThat(filmReturn.getId()).isEqualTo(foundFilm.getId());
-        assertThat(filmReturn.getName()).isEqualTo(foundFilm.getName());
-        assertThat(filmReturn.getDescription()).isEqualTo(foundFilm.getDescription());
-        assertThat(filmReturn.getReleaseDate()).isEqualTo("2014-03-17");
-        assertThat(filmReturn.getDuration()).isEqualTo(180L);
-        assertThat(filmReturn.getMpa().getId()).isEqualTo(1);
+        Film foundFilm = filmDbStorage.findByID(film.getId());
+        assertThat(film.getId()).isEqualTo(foundFilm.getId());
+        assertThat(film.getName()).isEqualTo(foundFilm.getName());
+        assertThat(film.getDescription()).isEqualTo(foundFilm.getDescription());
+        assertThat(film.getReleaseDate()).isEqualTo("2014-03-17");
+        assertThat(film.getDuration()).isEqualTo(180L);
+        assertThat(film.getMpa().getId()).isEqualTo(1);
     }
     @Test
     public void findAllNullTest() throws ObjectNotFoundException {
+        filmDbStorage.deleteFilm(film.getId());
         List<Film> films = (List<Film>) filmDbStorage.findAll();
         assertThat(films).hasSize(0);
     }
     @Test
     public void findAllTest() throws ObjectNotFoundException {
-        filmDbStorage.create(film);
         List<Film> films = (List<Film>) filmDbStorage.findAll();
         assertThat(films).hasSize(1);
     }
@@ -90,5 +86,11 @@ public class FilmDbStorageTest {
         assertThat(filmUpdate.getReleaseDate()).isEqualTo("2000-12-17");
         assertThat(filmUpdate.getDuration()).isEqualTo(100L);
         assertThat(filmUpdate.getMpa().getId()).isEqualTo(3);
+    }
+    @Test
+    public void deleteFilm() throws ObjectNotFoundException {
+        assertThat(filmDbStorage.findAll()).hasSize(1);
+        filmDbStorage.deleteFilm(film.getId());
+        assertThat(filmDbStorage.findAll()).hasSize(0);
     }
 }

@@ -1,19 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.hibernate.annotations.SortComparator;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Set;
-
+import java.util.TreeSet;
+@Data
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+//@AllArgsConstructor
+//@NoArgsConstructor
 @Builder
 @EqualsAndHashCode
 public class Film {

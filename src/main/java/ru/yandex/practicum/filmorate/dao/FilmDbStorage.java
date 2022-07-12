@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -23,31 +22,16 @@ import java.util.*;
 @Primary
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate  jdbcTemplate;
-    private static GenreDao genreDao;
-    private static MpaDao mpaDao;
-    private static LikeDao likeDao;
-
-    private static final String getAllFilms = "SELECT * FROM FILMS";
-    private static final String getFilmById ="SELECT * FROM FILMS WHERE ID_FILM = ?";
-    private static final String addFilm = "INSERT INTO FILMS (NAME, DESCRIPTION, RELEASE_DATA, DURATION, MPA_ID)" +
-            " VALUES (?, ?, ?, ?, ?)";
-    private static final String updateFilm = "UPDATE FILMS SET NAME=?, DESCRIPTION=?, RELEASE_DATA=?," +
-            " DURATION=?, MPA_ID=? WHERE ID_FILM=?";
-    private static final String findPopularFilms =
-            "SELECT f.ID_FILM, f.NAME, f.DESCRIPTION, f.RELEASE_DATA,f.DURATION, f.MPA_ID, COUNT(likes.ID_USER)" +
-            " FROM FILMS AS f " +
-            " LEFT JOIN LIKE_FILMS AS likes ON f.ID_FILM = likes.ID_FILM " +
-            " GROUP BY f.ID_FILM, f.NAME, f.DESCRIPTION, f.RELEASE_DATA, f.DURATION, f.MPA_ID " +
-            " ORDER BY COUNT(likes.ID_USER) DESC" +
-            " LIMIT ?";
-
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreDao genreDao, MpaDao mpaDao,LikeDao likeDao) {
+    private static GenreDbStorage genreDao;
+    private static MpaDbStorage mpaDao;
+    private static LikeDbStorage likeDao;
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreDbStorage genreDao, MpaDbStorage mpaDao, LikeDbStorage likeDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
         this.likeDao = likeDao;
     }
-    static Film makeFilm(ResultSet rs,int rowNum) throws SQLException {
+    public static Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("ID_FILM");
         String name = rs.getString("NAME");
         String description = rs.getString("DESCRIPTION");
@@ -64,13 +48,14 @@ public class FilmDbStorage implements FilmStorage {
                 duration(duration).
                 mpa(mpa).
                 likes(likes).
-                genres(genre.isEmpty() ? null : genre).
+                genres(genre).
                 build();
     }
 
     @Override
     public Film findByID(long filmId) throws ObjectNotFoundException {
-        final List<Film> films = jdbcTemplate.query(getFilmById,FilmDbStorage::makeFilm,filmId);
+        String getFilmById ="SELECT * FROM FILMS WHERE ID_FILM = ?";
+        final List<Film> films = jdbcTemplate.query(getFilmById, FilmDbStorage::makeFilm,filmId);
         if (films.size() < 1){
             throw new ObjectNotFoundException("films",filmId);
         }
@@ -78,11 +63,14 @@ public class FilmDbStorage implements FilmStorage {
     }
     @Override
     public Collection<Film> findAll() throws ObjectNotFoundException {
-        return jdbcTemplate.query(getAllFilms,(rs, rowNum) -> makeFilm(rs, rowNum));
+        String getAllFilms = "SELECT * FROM FILMS";
+        return jdbcTemplate.query(getAllFilms,(rs, rowNum) -> FilmDbStorage.makeFilm(rs, rowNum));
     }
     @Override
     public Film create(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
+        String addFilm = "INSERT INTO FILMS (NAME, DESCRIPTION, RELEASE_DATA, DURATION, MPA_ID)" +
+                " VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update((Connection connection) -> {
             PreparedStatement stmt = connection.prepareStatement(addFilm, new String[]{"ID_FILM"});
             stmt.setString(1, film.getName());
@@ -109,6 +97,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) throws ObjectNotFoundException {
         findByID(film.getId());
+        String updateFilm = "UPDATE FILMS SET NAME=?, DESCRIPTION=?, RELEASE_DATA=?," +
+                " DURATION=?, MPA_ID=? WHERE ID_FILM=? ";
         jdbcTemplate.update(updateFilm,
                 film.getName(),
                 film.getDescription(),
@@ -124,15 +114,33 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         log.debug("Фильм обновлен, ID - {}", film.getId());
-        return film;
+        return findByID(film.getId());
+    }
+    @Override
+    public Long deleteFilm(Long filmId){
+        String deleteFilm = "DELETE FROM FILMS WHERE ID_FILM = ?";
+        jdbcTemplate.update(deleteFilm, filmId);
+        log.info("Записи с фильмом успешно удалены, его id - {}", filmId);
+        return filmId;
     }
 
+    @Override
     public Collection<Film> findPopularFilms(Integer maxSize) {
-        return new LinkedHashSet<>(jdbcTemplate.query(findPopularFilms, (rs, rowNum) -> makeFilm(rs,rowNum), maxSize));
+        String findPopularFilms =
+                "SELECT f.ID_FILM, f.NAME, f.DESCRIPTION, f.RELEASE_DATA,f.DURATION, f.MPA_ID, COUNT(likes.ID_USER)" +
+                        " FROM FILMS AS f " +
+                        " LEFT JOIN LIKE_FILMS AS likes ON f.ID_FILM = likes.ID_FILM " +
+                        " GROUP BY f.ID_FILM, f.NAME, f.DESCRIPTION, f.RELEASE_DATA, f.DURATION, f.MPA_ID " +
+                        " ORDER BY COUNT(likes.ID_USER) DESC" +
+                        " LIMIT ?";
+        log.info("Популярные фильмы получены,ограничение по записям", maxSize);
+        return new HashSet<>(jdbcTemplate.query(findPopularFilms, (rs, rowNum) -> FilmDbStorage.makeFilm(rs,rowNum), maxSize));
     }
+    @Override
     public Long addLike(Long filmId, Long userId) {
         return likeDao.addLike(filmId, userId);
     }
+    @Override
     public Long deleteLike(Long filmId, Long userId) {
         return likeDao.deleteLike(filmId, userId);
     }

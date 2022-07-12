@@ -6,9 +6,9 @@ VALUES ('G'),
        ('NC-17');
 
 INSERT INTO GENRES (name)
-VALUES ('COMEDY'),
-       ('DRAMA'),
-       ('CARTOON'),
-       ('THRILLER'),
-       ('DOCUMENTARY'),
-       ('ACTION');
+VALUES ('Комедия'),
+       ('Драма'),
+       ('Мультфильм'),
+       ('Триллер'),
+       ('Документальный'),
+       ('Боевик');

@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
+import ru.yandex.practicum.filmorate.dao.MpaDbStorage;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.MPA;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
 @Slf4j
 public class MpaService {
 
-    private final MpaDao mpaDao;
+    private final MpaDbStorage mpaDao;
 
     public Collection<MPA> findAll() {
         return mpaDao.findAll();
