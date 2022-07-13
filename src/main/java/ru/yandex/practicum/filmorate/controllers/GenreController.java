@@ -16,18 +16,15 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Slf4j
 public class GenreController {
-
     private final GenreService genreService;
-
     @GetMapping
     public Collection<Genre> findAll() {
-        log.debug("Запрос на получение всех жанров");
+        log.info("Запрос на получение всех жанров");
         return genreService.findAll();
     }
-
     @GetMapping("{id}")
     public Genre getById(@PathVariable("id") Long id) throws ObjectNotFoundException {
-        log.debug("Запрос на получение жанров по id {}",id);
+        log.info("Запрос на получение жанров по id {}",id);
         return genreService.findById(id);
     }
 

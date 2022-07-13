@@ -7,10 +7,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@ToString
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @Builder
 public class User {
     private long id;

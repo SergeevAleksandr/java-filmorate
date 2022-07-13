@@ -19,9 +19,9 @@ import java.util.*;
 @Slf4j
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate  jdbcTemplate;
-    private FriendDbStorage friendDao;
+    private FriendStorage friendDao;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate, FriendDbStorage friendDao) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FriendStorage friendDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.friendDao = friendDao;
     }
@@ -92,14 +92,14 @@ public class UserDbStorage implements UserStorage {
                 user.getLogin(),
                 user.getBirthday(),
                 user.getId());
-        log.debug("Пользователь обновлен, ID_USER - {}", user.getId());
+        log.info("Пользователь обновлен, ID_USER - {}", user.getId());
         return user;
     }
     @Override
     public Long delete(Long userId) {
         String deleteUser = "DELETE FROM USERS WHERE ID_USER = ?";
         jdbcTemplate.update(deleteUser, userId);
-        log.debug("Запись с пользователем успешно удалена, его id - {}", userId);
+        log.info("Запись с пользователем успешно удалена, его id - {}", userId);
         return userId;
     }
     /**Методы друзей**/

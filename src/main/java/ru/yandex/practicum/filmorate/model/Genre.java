@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-@ToString
-@Getter
-@Setter
+@Data
 @Builder
-@EqualsAndHashCode
+
 public class Genre {
     private long id;
     private String name;

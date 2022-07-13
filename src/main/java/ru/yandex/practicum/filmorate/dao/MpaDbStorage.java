@@ -14,9 +14,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MpaDbStorage implements MPAStorage {
+public class MpaDbStorage implements MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
 
     static MPA makeMpa(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("ID_MPA");
@@ -32,6 +33,7 @@ public class MpaDbStorage implements MPAStorage {
         String getMpa = "SELECT * FROM MPA";
         return jdbcTemplate.query(getMpa, MpaDbStorage::makeMpa);
     }
+    @Override
     public MPA findById(Long mpaId) throws ObjectNotFoundException {
         String findMpaFromId = "SELECT * FROM MPA WHERE ID_MPA = ?";
         List<MPA> mpas = jdbcTemplate.query(findMpaFromId, (rs, rowNum) -> makeMpa(rs, rowNum), mpaId);

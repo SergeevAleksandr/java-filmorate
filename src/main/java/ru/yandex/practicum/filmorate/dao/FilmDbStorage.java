@@ -22,10 +22,10 @@ import java.util.*;
 @Primary
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate  jdbcTemplate;
-    private static GenreDbStorage genreDao;
-    private static MpaDbStorage mpaDao;
-    private static LikeDbStorage likeDao;
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreDbStorage genreDao, MpaDbStorage mpaDao, LikeDbStorage likeDao) {
+    private static GenreStorage genreDao;
+    private static MpaStorage mpaDao;
+    private static LikeStorage likeDao;
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreStorage genreDao, MpaStorage mpaDao, LikeStorage likeDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
@@ -113,7 +113,7 @@ public class FilmDbStorage implements FilmStorage {
                 genreDao.addGenreForFilm(film.getId(), genre.getId());
             }
         }
-        log.debug("Фильм обновлен, ID - {}", film.getId());
+        log.info("Фильм обновлен, ID - {}", film.getId());
         return findByID(film.getId());
     }
     @Override

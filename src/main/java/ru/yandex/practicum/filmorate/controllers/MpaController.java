@@ -20,12 +20,12 @@ public class MpaController {
 
     @GetMapping
     public Collection<MPA> findAll() {
-        log.debug("Запрос на получение всех MPA");
+        log.info("Запрос на получение всех MPA");
         return mpaService.findAll();
     }
     @GetMapping("{id}")
     public MPA findById(@PathVariable("id") Long id) throws ObjectNotFoundException {
-        log.debug("Запрос на получение MPA по id {}",id);
+        log.info("Запрос на получение MPA по id {}",id);
         return mpaService.findById(id);
     }
 }

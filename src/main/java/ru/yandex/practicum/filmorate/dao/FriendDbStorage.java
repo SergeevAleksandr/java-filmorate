@@ -35,7 +35,7 @@ public class FriendDbStorage implements FriendStorage {
     public Long addFriend(Long userId, Long friendId) {
         String addFriend = "INSERT INTO FRIENDS (FIRST_FRIEND, SECOND_FRIEND) VALUES (?, ?)";
         jdbcTemplate.update(addFriend, userId, friendId);
-        log.debug("Добавление {} в друзья {} прошло успешно", friendId, userId);
+        log.info("Добавление {} в друзья {} прошло успешно", friendId, userId);
         return userId;
     }
     @Override
@@ -43,7 +43,7 @@ public class FriendDbStorage implements FriendStorage {
         String deleteFriend = "DELETE FROM FRIENDS WHERE" +
                 " FIRST_FRIEND = ? AND SECOND_FRIEND = ?";
         jdbcTemplate.update(deleteFriend, userId, friendId);
-        log.debug("Удаление {} из друзей {} прошло успешно", friendId, userId);
+        log.info("Удаление {} из друзей {} прошло успешно", friendId, userId);
         return userId;
     }
     @Override

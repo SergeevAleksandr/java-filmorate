@@ -4,12 +4,9 @@ import lombok.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Set;
-@ToString
-@Getter
-@Setter
-@AllArgsConstructor
+
 @Builder
-@EqualsAndHashCode
+@Data
 public class Film {
     private long id;
     @NotBlank
@@ -24,5 +21,4 @@ public class Film {
     private MPA mpa;
     private Set<Genre> genres;
     private Set<Long> likes;
-
 }
